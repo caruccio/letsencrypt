@@ -1,0 +1,69 @@
+#!/bin/bash
+
+[ "${DEBUG}" == 'true' ] && set -x
+
+SANS=''
+INCLUDE_WWW=${INCLUDE_WWW:-true}
+
+if [ -z "${DOMAIN_NAME}" ]; then
+    echo "Missing env: DOMAIN_NAME"
+    exit 1
+elif [ "${DOMAIN_NAME:0:4}" == 'www.' ]; then
+    INCLUDE_WWW=true
+    DOMAIN_NAME=${DOMAIN_NAME:4}
+fi
+
+if [ "${INCLUDE_WWW}" == 'true' ]; then
+    SANS="www.${DOMAIN_NAME}"
+fi
+
+if [ -z "${DOMAIN_NAME}" ]; then
+    echo Invalid domain name
+    exit 1
+fi
+
+set -eu
+
+WORKDIR=${WORKDIR:-/getssl}
+CONFIGDIR=$WORKDIR/${DOMAIN_NAME}
+WWWROOT=/getssl/www/${DOMAIN_NAME}/web
+CHALLENGE_DIR=${WWWROOT}/.well-known/acme-challenge
+
+mkdir -p ${CHALLENGE_DIR}
+
+( cd ${WWWROOT} && python /getssl/http-server.py ) &
+sleep 2
+
+./getssl --nocheck -w "$WORKDIR" --create ${DOMAIN_NAME}
+
+cat >> ${CONFIGDIR}/getssl.cfg <<EOF
+
+## Auto generated
+
+SANS="${SANS}"
+CA="https://acme-v01.api.letsencrypt.org"
+ACL=(${CHALLENGE_DIR} ${SANS:+${CHALLENGE_DIR}})
+CHECK_REMOTE=false
+EOF
+
+./getssl --nocheck -w "$WORKDIR" ${DOMAIN_NAME}
+
+echo
+echo '=== CSR file:' ${DOMAIN_NAME}.csr
+echo
+cat /getssl/${DOMAIN_NAME}/${DOMAIN_NAME}.csr
+
+echo
+echo '=== Certificate file:' ${DOMAIN_NAME}.pem
+echo
+cat /getssl/${DOMAIN_NAME}/${DOMAIN_NAME}.crt
+
+echo
+echo '=== Chain file:' ${DOMAIN_NAME}-chain.pem
+echo
+cat /getssl/${DOMAIN_NAME}/chain.crt
+
+echo
+echo '=== Key file:' ${DOMAIN_NAME}.key
+echo
+cat /getssl/${DOMAIN_NAME}/${DOMAIN_NAME}.key
