@@ -46,6 +46,8 @@ ACL=(${CHALLENGE_DIR} ${SANS:+${CHALLENGE_DIR}})
 CHECK_REMOTE=false
 EOF
 
+[ -z "${DOMAIN_KEY_LENGTH}" ] || echo "DOMAIN_KEY_LENGTH=${DOMAIN_KEY_LENGTH}" >> ${CONFIGDIR}/getssl.cfg
+
 ./getssl --nocheck -w "$WORKDIR" ${DOMAIN_NAME}
 
 echo
