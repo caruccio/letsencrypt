@@ -1,7 +1,7 @@
 Example usage
 
 ```
-$ oc -n mateus run letsenc --image=caruccio/letsencrypt \
+$ oc -n mateus run letsenc --restart=Never --image=caruccio/letsencrypt \
     --env=DOMAIN_NAME=php.caruccio.com \
     --env=INCLUDE_WWW=false \
     --labels="app=letsenc,domain=php.caruccio.com" \
