@@ -2,7 +2,7 @@ Use this image to generate [Let's Encrypt](https://letsencrypt.org) certificates
 
 ___Warning: Keep an eye on [rate limits](https://letsencrypt.org/docs/rate-limits/) imposed by Let's Encrypt.___
 
-From within your project, create a new application named `ssl`. If you'd like to suppress certificate for `www`, add to the `--env=INCLUDE_WWW=false` to command below.
+From within your project, create a new application named `ssl`. If you'd like to suppress certificate for `www`, add `--env=INCLUDE_WWW=false` to command below.
 
 ```
 $ DOMAIN_NAME=example.com
