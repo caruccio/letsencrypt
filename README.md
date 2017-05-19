@@ -1,4 +1,4 @@
-Use this image to generate [Let's Encrypt](https://letsencrypt.org) certificates for your applications on Openshfit.
+This docker image allows to easily generate [Let's Encrypt](https://letsencrypt.org) certificates for your applications on OPenshift.
 
 ___Warning: Keep an eye on [rate limits](https://letsencrypt.org/docs/rate-limits/) imposed by Let's Encrypt.___
 
